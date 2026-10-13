@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Informatika metodikasi — Musobaqa</title>
+<style>
+:root{
+  --bg:#0f1530;--card:#1a2247;--tx:#eef1ff;--mu:#9aa6d6;
+  --ac:#6c8cff;--g:#22c55e;--b:#3b82f6;--y:#facc15;--r:#ef4444;
+  --radius:16px;
+}
+@media(prefers-color-scheme:light){
+  :root{--bg:#eef2ff;--card:#fff;--tx:#14193a;--mu:#5b6595}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh;
+     padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,20px)}
+main{max-width:600px;margin:0 auto;padding:14px 12px 60px}
+
+.card{background:var(--card);border-radius:var(--radius);padding:22px 18px;margin-bottom:14px;box-shadow:0 4px 24px #0002}
+h1{font-size:clamp(20px,5vw,26px);line-height:1.3;margin-bottom:8px}
+h2{font-size:clamp(15px,4vw,18px);line-height:1.4;margin-bottom:14px}
+p{color:var(--mu);margin:5px 0;font-size:15px}
+label{display:block;font-size:13px;color:var(--mu);margin-bottom:4px;margin-top:10px}
+
+input,textarea{width:100%;padding:13px 14px;border-radius:12px;border:2px solid #7f8cc540;
+               background:transparent;color:var(--tx);font:inherit;margin-bottom:6px}
+input:focus,textarea:focus{outline:none;border-color:var(--ac)}
+textarea{resize:vertical;min-height:80px;font-size:13px}
+
+.btn{width:100%;padding:15px;border:0;border-radius:12px;background:var(--ac);color:#fff;
+     font:700 16px inherit;cursor:pointer;touch-action:manipulation;transition:opacity .15s,transform .1s;margin-top:8px}
+.btn:active{opacity:.82;transform:scale(.98)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn.g{background:var(--g)}.btn.r{background:var(--r)}
+.btn.out{background:transparent;border:2px solid var(--ac);color:var(--ac)}
+
+.opt{display:block;width:100%;text-align:left;margin:9px 0;padding:15px 14px;border-radius:12px;
+     border:2px solid #7f8cc540;background:transparent;color:var(--tx);cursor:pointer;
+     font:inherit;font-size:15px;line-height:1.5;touch-action:manipulation;transition:.15s}
+.opt:hover{border-color:var(--ac)}
+.opt.ok{background:var(--g)!important;border-color:var(--g)!important;color:#fff!important}
+.opt.no{background:var(--r)!important;border-color:var(--r)!important;color:#fff!important}
+
+.bar{height:8px;border-radius:8px;background:#7f8cc528;overflow:hidden;margin:8px 0 18px}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .3s}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+
+.big{font-size:clamp(52px,13vw,72px);font-weight:800;text-align:center;line-height:1;margin:8px 0}
+.ban{text-align:center;font-size:clamp(16px,4vw,21px);font-weight:800;padding:14px;border-radius:12px;margin-bottom:12px}
+.win{background:#22c55e22;color:var(--g);animation:pop .6s}
+.lose{background:#ef444422;color:var(--r);animation:shake .45s}
+@keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.sub{color:var(--mu);text-align:center;font-size:14px;margin:3px 0}
+
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px}
+table{width:100%;border-collapse:collapse;min-width:280px}
+th,td{padding:10px 8px;text-align:left;font-size:14px}
+th{color:var(--mu);font-size:12px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #7f8cc522}
+td{border-bottom:1px solid #7f8cc510}
+tr:last-child td{border-bottom:none}
+tr.r1{background:#22c55e18}tr.r1 td{font-weight:700;color:var(--g)}
+tr.r2{background:#3b82f618}tr.r2 td{font-weight:700;color:var(--b)}
+tr.r3{background:#facc1518}tr.r3 td{font-weight:700;color:var(--y)}
+tr.me td:nth-child(2){text-decoration:underline dotted}
+
+.dot{width:9px;height:9px;border-radius:50%;background:var(--r);display:inline-block;vertical-align:middle;margin-right:5px;transition:.3s}
+.dot.on{background:var(--g);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sm{font-size:13px;color:var(--mu)}
+.hide{display:none!important}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:99}
+
+/* Setup ekrani */
+.step{background:#7f8cc511;border-radius:10px;padding:12px 14px;margin:8px 0;font-size:14px;line-height:1.7}
+.step strong{color:var(--ac)}
+.copy-box{background:#7f8cc520;border-radius:8px;padding:10px 12px;font-size:12px;font-family:monospace;
+           word-break:break-all;margin:8px 0;cursor:pointer;border:1px solid #7f8cc530}
+.copy-box:hover{border-color:var(--ac)}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:700;vertical-align:middle}
+.tag.g{background:#22c55e22;color:var(--g)}.tag.r{background:#ef444422;color:var(--r)}
+.tag.y{background:#facc1522;color:var(--y)}
+.divider{height:1px;background:#7f8cc520;margin:16px 0}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<main id="app">
+
+  <!-- ① SOZLAMA (birinchi yuklashda ko'rinadi) -->
+  <section id="setup" class="card hide">
+    <h1>⚙️ Bir martalik sozlama</h1>
+    <p>Do'stlaringiz ham ko'rishi uchun Firebase bepul bazasini ulang.<br>
+       <span class="tag y">⏱ 3–5 daqiqa</span></p>
+    <div class="divider"></div>
+
+    <div class="step">
+      <strong>1.</strong> <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--ac)">console.firebase.google.com</a> ga kiring<br>
+      → <b>Add project</b> → nom: <code style="background:#7f8cc520;padding:2px 6px;border-radius:5px">informatika-test</code> → Create
+    </div>
+    <div class="step">
+      <strong>2.</strong> Chap panel → <b>Realtime Database</b> → <b>Create database</b><br>
+      → Europe-west1 → <b>Start in test mode</b> → Enable
+    </div>
+    <div class="step">
+      <strong>3.</strong> <b>Rules</b> tabiga bosing → quyidagini yozing → <b>Publish</b>:
+      <div class="copy-box" onclick="copyText(this)">{"rules":{".read":true,".write":true}}</div>
+    </div>
+    <div class="step">
+      <strong>4.</strong> ⚙️ Project settings → <b>General</b> → <b>Your apps</b> → <b>&lt;/&gt;</b> Web<br>
+      → Nickname: <code style="background:#7f8cc520;padding:2px 6px;border-radius:5px">test</code> → Register → <b>firebaseConfig</b> ni ko'chiring
+    </div>
+
+    <div class="divider"></div>
+    <p class="sm">Database URL ni kiriting (ko'rinishi: <code style="background:#7f8cc520;padding:1px 5px;border-radius:4px">https://...firebasedatabase.app</code>):</p>
+    <label>Database URL</label>
+    <input id="cfgUrl" placeholder="https://informatika-test-default-rtdb.europe-west1.firebasedatabase.app" type="url">
+    <label>API Key</label>
+    <input id="cfgKey" placeholder="AIzaSy..." type="text">
+    <label>Project ID</label>
+    <input id="cfgPid" placeholder="informatika-test-12345" type="text">
+
+    <button class="btn g" onclick="saveConfig()">✅ Saqlash va boshlash</button>
+    <button class="btn out" onclick="skipSetup()" style="margin-top:6px">⚡ Hozircha o'tkazib yuborish (lokal rejim)</button>
+    <p class="sm" id="cfgErr" style="color:var(--r);margin-top:8px"></p>
+  </section>
+
+  <!-- ② BOSH SAHIFA -->
+  <section id="home" class="card hide">
+    <h1>🏆 Informatika o'qitish metodikasi</h1>
+    <p>50 ta savoldan tasodifiy 10 tasi &nbsp;·&nbsp; har biri 10 ball</p>
+    <p>60 va undan yuqori — <strong style="color:var(--g)">g'alaba!</strong></p>
+    <input id="nm" placeholder="Ism-familiyangiz" maxlength="40" autocomplete="name" enterkeyhint="go" style="margin-top:14px">
+    <button class="btn" id="go">▶ Testni boshlash</button>
+    <div class="row" style="margin-top:12px">
+      <span class="sm" id="info"></span>
+      <button class="btn out" onclick="openSettings()" style="width:auto;padding:8px 14px;font-size:13px;margin:0">⚙️</button>
+    </div>
+  </section>
+
+  <!-- ③ TEST -->
+  <section id="quiz" class="card hide">
+    <div class="row">
+      <span class="sm" id="pg">Savol 1 / 10</span>
+      <span class="sm" id="timer">⏱ 0:00</span>
+    </div>
+    <div class="bar"><i id="pb" style="width:0%"></i></div>
+    <h2 id="qt" style="margin-bottom:16px"></h2>
+    <div id="ops"></div>
+  </section>
+
+  <!-- ④ NATIJA -->
+  <section id="res" class="card hide">
+    <div class="ban" id="ban"></div>
+    <div class="big" id="sc"></div>
+    <p class="sub" id="tm"></p>
+    <p class="sub" style="font-weight:700" id="bs"></p>
+    <button class="btn g" id="rt" style="margin-top:18px">🔁 Qayta topshirish</button>
+    <button class="btn out" id="goHome" style="margin-top:8px">🏠 Bosh sahifa</button>
+  </section>
+
+  <!-- ⑤ REYTING -->
+  <section class="card">
+    <div class="row">
+      <h2 style="margin:0">📊 Reyting &nbsp;<span class="sm" id="cnt"></span></h2>
+      <span><span class="dot" id="dot"></span><span class="sm" id="connTxt">…</span></span>
+    </div>
+    <div id="lbMsg" class="sm" style="padding:10px 0">Yuklanmoqda…</div>
+    <div class="tw hide" id="tbWrap">
+      <table>
+        <thead><tr><th>#</th><th>Ism</th><th>Ball</th><th>Vaqt</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <p class="sm" id="lbn" style="margin-top:8px"></p>
+  </section>
+
+</main>
+
+<script>
+/* ================================================================
+   SAVOLLAR (50 ta)
+   ================================================================ */
+const Q=[
+  {q:"An'anaviy darsning asosiy markazida kim turadi?",o:["O'quvchi","O'qituvchi","Ota-ona","Mutaxassis"],a:1},
+  {q:"An'anaviy dars odatda qaysi bosqichlardan iborat?",o:["Faqat baholash va uyga vazifa","Kirish, mavzuni yoritish, mustahkamlash va yakunlash","Faqat ma'ruza","Faqat guruhli ish"],a:1},
+  {q:"An'anaviy darsda ko'proq qaysi metodlardan foydalaniladi?",o:["Faqat loyiha va tadqiqot","Ma'ruza, savol-javob va amaliy mashq","Faqat rolli o'yin","Faqat video"],a:1},
+  {q:"An'anaviy o'qitishning afzalliklaridan biri qaysi?",o:["O'quvchi doim passiv bo'ladi","O'qitish muhiti yuqori darajada nazorat qilinadi","Mustaqil yechimlarga doim sharoit yaratadi","O'qituvchi nazorati bo'lmaydi"],a:1},
+  {q:"An'anaviy o'qitishning mumkin bo'lgan kamchiligi qaysi?",o:["Vaqtdan unumli foydalanish","Aniq ilmiy bilimlarga tayanish","O'quvchilarning passiv ishtirokchiga aylanishi","O'qitish jarayonini nazorat qilish"],a:2},
+  {q:"An'anaviy darsning kirish bosqichida nima bajariladi?",o:["Faqat yakuniy baho qo'yiladi","O'tgan material takrorlanib, maqsad va reja tushuntiriladi","Faqat mustaqil mashq bajariladi","Guruhlar tarqatiladi"],a:1},
+  {q:"Yangi mavzuni yoritishda materialni qanday taqdim etish tavsiya etiladi?",o:["Bir butun, izohsiz berish","Kichik bo'laklarga ajratib, misollar bilan tushuntirish","Faqat uyga vazifa sifatida berish","O'quvchilar savollarini taqiqlash"],a:1},
+  {q:"Teskari aloqa nima uchun kerak?",o:["O'quvchilar tushunganlik darajasini bilish uchun","Darsni qisqartirish uchun","Faqat davomatni aniqlash uchun","Dars rejasini yashirish uchun"],a:0},
+  {q:"Mustahkamlash mashqida nima qilinadi?",o:["Topshiriq yechimi o'quvchilar bilan tahlil qilinadi","Faqat yangi mavzu e'lon qilinadi","Dars boshlanadi","Faqat baholar yoziladi"],a:0},
+  {q:"Yo'naltirib turiluvchi mashqda o'qituvchining vazifasi nima?",o:["O'quvchi o'rniga hamma ishni bajarish","O'quvchilarni kuzatish va zarur tuzatish kiritish","Sinfni tark etish","Faqat ma'ruza o'qish"],a:1},
+  {q:"Mustaqil bajariladigan mashq qanday bajariladi?",o:["O'qituvchi har bir qadamni bajarib beradi","O'quvchilar o'qituvchi yordamisiz bajaradi","Faqat guruh sardori bajaradi","Faqat og'zaki muhokama qilinadi"],a:1},
+  {q:"An'anaviy o'qitish qaysi holatda foydali bo'lishi mumkin?",o:["Aniq tushunchalar va ma'lum ko'nikmalarni o'rganishda","O'quvchilarni muloqotdan chetlatishda","Faqat dam olishda","Faqat bahsni to'xtatishda"],a:0},
+  {q:"Noan'anaviy o'qitishda o'quvchiga qanday yondashuv beriladi?",o:["O'quvchiga ko'proq erkinlik beriladi","O'quvchi faqat tinglaydi","O'quvchi savol bera olmaydi","O'qituvchi bilan muloqot taqiqlanadi"],a:0},
+  {q:"Noan'anaviy usullardan samarali foydalanish nimaga bog'liq?",o:["Faqat sinf xonasining rangiga","O'qituvchining kasbiy malakasi va mahoratiga","Faqat dars davomiyligiga","Faqat darslik hajmiga"],a:1},
+  {q:"Aqliy hujum usulining asosiy maqsadi nima?",o:["O'quvchilarning fikr va g'oyalarini jamlash","Faqat tayyor javobni ko'chirish","O'quvchilarni alohida baholash","Mavzuni bekor qilish"],a:0},
+  {q:"Manbada guruh bo'lib ishlash uchun odatda nechta o'quvchidan iborat guruh keltirilgan?",o:["2–3","4–6","10–12","15–20"],a:1},
+  {q:"Bahs usulida o'quv guruhi qanday tashkil qilinadi?",o:["Uchta mustaqil sinfga","Ikki komandaga bo'linib, mavzu yuzasidan munozara qiladi","Faqat yakka ishlaydi","Faqat test yechadi"],a:1},
+  {q:"Mehmon mashg'uloti qanday o'tkaziladi?",o:["Mutaxassis ishtirokida","Faqat video ko'rsatib","Faqat uyda","Baholashsiz va mavzusiz"],a:0},
+  {q:"So'rovnoma qachon o'tkazilishi mumkin?",o:["Har bir bo'lim yoki bob yagunida","Faqat o'quv yili boshida","Faqat tanaffusda","Faqat laboratoriyada"],a:0},
+  {q:"Og'zaki mashqlar nimalarni rivojlantiradi?",o:["Nutq madaniyati va mantiqiy fikrlashni","Faqat yozuv tezligini","Faqat rasm chizishni","Faqat jismoniy kuchni"],a:0},
+  {q:"Yozma mashqlar qanday natijaga xizmat qiladi?",o:["Ko'nikma va malakalarni shakllantirish hamda mustahkamlashga","Faqat dam olishga","Faqat sinfni guruhlashga","Faqat og'zaki nutqqa"],a:0},
+  {q:"O'z-o'zini attestatsiya qilish nimaga qaratilgan?",o:["O'z faoliyatini nazorat qilishga","Faqat boshqalarni jazolashga","Darsni bekor qilishga","Faqat davomatga"],a:0},
+  {q:"Video materiallardan foydalanishda qaysi vositalar qo'llanishi mumkin?",o:["Multimedia, videoyozuv va kompyuter displeyi","Faqat doska bo'risi","Faqat daftar","Faqat kalkulyator"],a:0},
+  {q:"Improvizatsiya usuli nimani rivojlantiradi?",o:["Nostandart vaziyatlarni mustaqil hal qilishni","Faqat matnni yodlashni","Faqat ko'chirishni","Faqat tinglashni"],a:0},
+  {q:"Loyihalash ishlari qaysi faoliyatlarni o'z ichiga oladi?",o:["Rejalashtirish, tashkil etish, tekshirish, tahlil va baholash","Faqat tinglash","Faqat savol berish","Faqat davomat tekshirish"],a:0},
+  {q:"Kitob bilan ishlash qanday ko'nikmaga yordam beradi?",o:["O'quv materialini mustaqil o'zlashtirish va mazmunini bayon etishga","Faqat tez yugurishga","Faqat jamoalarni tanlashga","Faqat videoni montaj qilishga"],a:0},
+  {q:"Individual-amaliy usulda o'quvchilar nima qiladi?",o:["Nazariy bilimlarini amaliy vazifalarda qo'llaydi","Faqat ma'ruza tinglaydi","Faqat boshqa guruhni kuzatadi","Faqat bahsni boshqaradi"],a:0},
+  {q:"Suhbat usulining asosini nima tashkil qiladi?",o:["Muloqot va savol-javob","Faqat yozma imtihon","Faqat mustaqil loyiha","Faqat video namoyishi"],a:0},
+  {q:"Vaziyatlarni o'rganish usulida nima qilinadi?",o:["Muassasada uchraydigan vaziyatlar o'rganilib, yechimlar ishlab chiqiladi","Faqat ta'riflar yodlanadi","Faqat guruhlar nomlanadi","Faqat test kaliti beriladi"],a:0},
+  {q:"O'zaro baholash deganda nima tushuniladi?",o:["Ta'lim oluvchilarning bir-birining ishini baholashi","Faqat o'qituvchining o'zini baholashi","Faqat ota-onalar yig'ilishi","Baholashning bekor qilinishi"],a:0},
+  {q:"Quyidagilardan qaysi biri manbada keltirilgan baholash turi?",o:["Tengdoshining baholashi","Faqat tasodifiy tanlash","Faqat dars jadvali","Faqat tanaffus vaqti"],a:0},
+  {q:"Informatika fanini o'qitishning asosiy mashg'ulot shakllari qaysilar?",o:["Ma'ruza, amaliy va laboratoriya mashg'ulotlari","Faqat sayohat va sport","Faqat imtihon","Faqat mustaqil o'qish"],a:0},
+  {q:"Ma'ruza mashg'ulotida o'qituvchi asosan nima beradi?",o:["Nazariy bilimlarni","Faqat amaliy baholarni","Faqat uyga vazifani","Faqat laboratoriya jihozlarini"],a:0},
+  {q:"Amaliy mashg'ulotning asosiy vazifasi nima?",o:["Nazariy bilimlarni mustahkamlash","Yangi o'quvchilarni ro'yxatga olish","Faqat davomatni belgilash","Faqat nazariyani o'qib berish"],a:0},
+  {q:"Informatika laboratoriya mashg'ulotlari manbada qaysi shaklda o'tkazilishi aytilgan?",o:["Individual shaklda","Faqat ommaviy shaklda","Faqat masofadan","Faqat juftlikda"],a:0},
+  {q:"Ta'lim shakli nimalarni ifodalashi mumkin?",o:["Ta'lim oluvchilar soni, vaqt, joy va tashkil etish yo'lini","Faqat fan nomini","Faqat o'qituvchi yoshini","Faqat baholar rangini"],a:0},
+  {q:"Ta'lim oluvchilar soniga ko'ra tashkiliy shakllar qaysilar?",o:["Ommaviy, kichik guruh va yakka holda","Faqat nazariy va amaliy","Faqat yozma va og'zaki","Faqat kunduzgi va kechki"],a:0},
+  {q:"Darsdan tashqari mashg'ulotga qaysi biri misol bo'ladi?",o:["To'garak yoki olimpiada","Faqat ma'ruza","Faqat sinfdagi laboratoriya","Faqat kundalik tekshiruvi"],a:0},
+  {q:"Kichik guruhlar uchun o'tirish joylarini qanday tashkil etish maqsadga muvofiq?",o:["O'quvchilar yuzma-yuz muloqot qila oladigan tarzda","Barcha o'quvchilar faqat bir tomonga qaraydigan tarzda","Muloqot qilish imkonsiz bo'ladigan tarzda","O'quvchilarni bir-biridan uzoqlashtirib"],a:0},
+  {q:"Guruhda ishlashda kommunikativ ko'nikmalar nima uchun muhim?",o:["Hamkorlik va o'zaro muloqotni mustahkamlash uchun","Faqat baholarni yashirish uchun","Faqat dars vaqtini qisqartirish uchun","Faqat guruh nomini tanlash uchun"],a:0},
+  {q:"O'quvchilarni faqat o'z istaklariga qarab guruhlashning mumkin bo'lgan salbiy tomoni qaysi?",o:["Kuch jihatidan teng bo'lmagan guruhlar tuzilishi mumkin","Barcha guruhlar albatta teng bo'ladi","Muloqot butunlay yo'qoladi","Topshiriqlar avtomatik bajariladi"],a:0},
+  {q:"Guruhlarni shakllantirishda nimani hisobga olish lozim?",o:["Yechiladigan masalaning mazmunini","Faqat o'quvchilarning kiyimini","Faqat xona rangini","Faqat dars kunini"],a:0},
+  {q:"O'quvchilarni raqamlar orqali guruhlash usulida nima qilinadi?",o:["O'quvchilar sanalib, bir xil raqamdagilar bir guruhga birlashadi","Har kim alohida qoladi","Faqat o'qituvchi guruhga kiradi","Faqat rangli kartochkalar yig'iladi"],a:0},
+  {q:"Kompyuter texnologiyasidan unumli foydalanish nimaga yordam beradi?",o:["Dars samaradorligini oshirishga","Dars mazmunini yo'qotishga","O'quvchini baholamaslikka","Faqat tanaffusni uzaytirishga"],a:0},
+  {q:"Nazorat topshiriqlarini nechta darajada berish tavsiya etilgan?",o:["2","3","4","6"],a:2},
+  {q:"Manbada 1–2-darajali topshiriqlar qanday tavsiflangan?",o:["Davlat ta'lim standartlariga mos","Faqat ijodiy va murakkab","Faqat laboratoriya uchun","Faqat uyga vazifa"],a:0},
+  {q:"3–4-darajali topshiriqlar qanday xarakterda bo'lishi tavsiya etiladi?",o:["Ijodiy xarakterdagi","Faqat yodlashga oid","Faqat tanishuv","Faqat davomatga oid"],a:0},
+  {q:"Klaster atamasi 4-ma'ruza tayanch so'zlari orasida keltirilganmi?",o:["Ha","Yo'q","Faqat 2-ma'ruzada","Faqat baholash turlarida"],a:0},
+  {q:"Qaysi biri 4-ma'ruza tayanch so'zlari qatorida keltirilgan?",o:["Qarorlar shajarasi","Stuffed crust","SQL jadvali","Kompyuter virusi"],a:0},
+  {q:"\u201cFikriy hujum\u201d atamasi qaysi mavzuga oid tayanch so'zlar qatorida uchraydi?",o:["O'qitishning zamonaviy texnologiyalari va vositalari","Faqat laboratoriya jihozlari","Faqat baholash jadvali","Faqat an'anaviy dars kamchiliklari"],a:0}
+];
+
+/* ================================================================
+   YORDAMCHILAR
+   ================================================================ */
+const $  = s=>document.querySelector(s);
+const sh = a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const fmt= s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+
+function copyText(el){
+  navigator.clipboard&&navigator.clipboard.writeText(el.textContent.trim())
+    .then(()=>{const old=el.style.background;el.style.background='#22c55e33';setTimeout(()=>el.style.background=old,600)});
+}
+
+/* ================================================================
+   HOLAT
+   ================================================================ */
+let uid,rows=[],quiz=[],qi=0,score=0,t0=0,busy=false,timerInt=null;
+let DB_URL='',fbOK=false,pollInt=null;
+
+/* ================================================================
+   UID
+   ================================================================ */
+function getUID(){
+  let id=localStorage.getItem('q_uid');
+  if(!id){id='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);localStorage.setItem('q_uid',id)}
+  return id;
+}
+
+/* ================================================================
+   CONFIG (localStorage)
+   ================================================================ */
+function loadConfig(){
+  try{return JSON.parse(localStorage.getItem('q_cfg')||'{}')}catch(e){return{}}
+}
+function saveConfig(){
+  const url=$('#cfgUrl').value.trim().replace(/\/+$/,'');
+  const key=$('#cfgKey').value.trim();
+  const pid=$('#cfgPid').value.trim();
+  if(!url||!url.startsWith('https')){$('#cfgErr').textContent='Database URL noto\'g\'ri — https:// bilan boshlanishi kerak';return}
+  localStorage.setItem('q_cfg',JSON.stringify({url,key,pid}));
+  localStorage.setItem('q_configured','1');
+  DB_URL=url;
+  initDB();
+  showHome();
+}
+function skipSetup(){
+  localStorage.setItem('q_configured','skip');
+  showHome();
+}
+function openSettings(){
+  const cfg=loadConfig();
+  $('#cfgUrl').value=cfg.url||'';
+  $('#cfgKey').value=cfg.key||'';
+  $('#cfgPid').value=cfg.pid||'';
+  show('setup');
+}
+
+/* ================================================================
+   FIREBASE REST (CDK yoki server kerak emas)
+   ================================================================ */
+async function fbGet(){
+  try{
+    const r=await fetch(DB_URL+'/results.json',{cache:'no-store'});
+    if(!r.ok)throw r.status;
+    return await r.json();
+  }catch(e){return null}
+}
+async function fbSet(uid,data){
+  try{
+    const r=await fetch(DB_URL+'/results/'+uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    return r.ok;
+  }catch(e){return false}
+}
+
+async function initDB(){
+  if(!DB_URL){setConn(false,'📴 Lokal rejim');loadLocal();return}
+  const d=await fbGet();
+  if(d!==null){
+    fbOK=true;setConn(true,'🟢 Jonli reyting');
+    rows=Object.entries(d).map(([id,v])=>({id,...v}));
+    board();
+    clearInterval(pollInt);
+    pollInt=setInterval(async()=>{const x=await fbGet();if(x){rows=Object.entries(x).map(([id,v])=>({id,...v}));board()}},8000);
+  }else{
+    setConn(false,'📴 Lokal rejim');loadLocal();
+  }
+}
+
+/* ================================================================
+   LOCAL STORAGE FALLBACK
+   ================================================================ */
+function loadLocal(){
+  try{rows=JSON.parse(localStorage.getItem('q_rows')||'[]')}catch(e){rows=[]}
+  board();
+}
+function saveLocal(){
+  try{localStorage.setItem('q_rows',JSON.stringify(rows))}catch(e){}
+}
+
+/* ================================================================
+   ULANISH HOLATI
+   ================================================================ */
+function setConn(on,txt){
+  fbOK=on;
+  $('#dot').classList.toggle('on',on);
+  $('#connTxt').textContent=txt;
+}
+
+/* ================================================================
+   REYTING JADVALI
+   ================================================================ */
+function board(){
+  rows.sort((a,b)=>b.score-a.score||a.time-b.time);
+  $('#cnt').textContent=rows.length+' ta ishtirokchi';
+  const tb=$('#tb');tb.innerHTML='';
+  if(!rows.length){$('#lbMsg').textContent='Hozircha natijalar yo\'q.';$('#lbMsg').classList.remove('hide');$('#tbWrap').classList.add('hide');return}
+  $( '#lbMsg').classList.add('hide');$('#tbWrap').classList.remove('hide');
+  rows.forEach((r,k)=>{
+    const tr=document.createElement('tr');
+    if(k<3)tr.className='r'+(k+1);
+    if(r.id===uid)tr.classList.add('me');
+    const medal=['🥇','🥈','🥉'][k]||(k+1);
+    [medal,r.name,r.score+' / 100',fmt(r.time)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});
+    tb.appendChild(tr);
+  });
+}
+
+/* ================================================================
+   EKRAN ALMASHISH
+   ================================================================ */
+function show(id){
+  ['setup','home','quiz','res'].forEach(s=>$('#'+s).classList.add('hide'));
+  $('#'+id).classList.remove('hide');
+  window.scrollTo(0,0);
+}
+function showHome(){show('home')}
+
+/* ================================================================
+   BOSHLASH
+   ================================================================ */
+$('#go').onclick=$('#rt').onclick=startQuiz;
+$('#goHome').onclick=showHome;
+$('#nm').addEventListener('keydown',e=>{if(e.key==='Enter')$('#go').click()});
+
+function startQuiz(){
+  const n=$('#nm').value.trim();
+  if(n.length<2){
+    $('#nm').style.borderColor='var(--r)';
+    setTimeout(()=>$('#nm').style.borderColor='',1500);
+    $('#nm').focus();return;
+  }
+  localStorage.setItem('q_name',n);
+  quiz=sh(Q).slice(0,10).map(q=>{
+    const opts=sh(q.o.map((t,k)=>({t,c:k===q.a})));
+    return{q:q.q,opts};
+  });
+  qi=0;score=0;t0=Date.now();busy=false;
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>$('#timer').textContent='⏱ '+fmt(Math.round((Date.now()-t0)/1000)),500);
+  show('quiz');showQ();
+}
+
+/* ================================================================
+   SAVOL
+   ================================================================ */
+function showQ(){
+  busy=false;
+  const q=quiz[qi];
+  $('#pg').textContent=`Savol ${qi+1} / 10  ·  Ball: ${score}`;
+  $('#pb').style.width=(qi*10)+'%';
+  $('#qt').textContent=q.q;
+  const ops=$('#ops');ops.innerHTML='';
+  q.opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=o.t;
+    b.onclick=()=>pick(b,o,q.opts);
+    ops.appendChild(b);
+  });
+}
+function pick(b,o,opts){
+  if(busy)return;busy=true;
+  if(o.c){score+=10;b.classList.add('ok')}
+  else{b.classList.add('no');[...$$('#ops .opt')].forEach((x,k)=>{if(opts[k].c)x.classList.add('ok')})}
+  setTimeout(()=>{if(++qi<10)showQ();else finish()},1000);
+}
+const $$=s=>[...document.querySelectorAll(s)];
+
+/* ================================================================
+   YAKUNLASH
+   ================================================================ */
+async function finish(){
+  clearInterval(timerInt);
+  const elapsed=Math.round((Date.now()-t0)/1000);
+  const name=$('#nm').value.trim();
+  const result={name,score,time:elapsed,ts:Date.now()};
+  show('res');
+  const prev=rows.find(x=>x.id===uid);
+  const better=!prev||score>prev.score||(score===prev.score&&elapsed<prev.time);
+  showResult(result,better?result:(prev||result));
+  if(better){
+    if(fbOK){
+      const ok=await fbSet(uid,result);
+      if(ok){setTimeout(async()=>{const d=await fbGet();if(d){rows=Object.entries(d).map(([id,v])=>({id,...v}));board()}},800)}
+      else{$('#lbn').textContent='⚠️ Serverga yozilmadi.';saveLocalResult(result)}
+    }else{saveLocalResult(result)}
+  }
+}
+function saveLocalResult(r){
+  rows=rows.filter(x=>x.id!==uid);
+  rows.push({id:uid,...r});
+  saveLocal();board();
+}
+
+/* ================================================================
+   NATIJA
+   ================================================================ */
+function showResult(r,best){
+  const w=r.score>=60;
+  const ban=$('#ban');
+  ban.className='ban '+(w?'win':'lose');
+  ban.textContent=w?'🎉 Tabriklaymiz! Testdan o\'tdingiz!':'😔 Yutqazdingiz. Qayta urinib ko\'ring!';
+  $('#sc').textContent=r.score+' / 100';
+  $('#tm').textContent='⏱ Sarflangan vaqt: '+fmt(r.time);
+  $('#bs').textContent='⭐ Eng yaxshi natijangiz: '+best.score+' / 100  ('+fmt(best.time)+')';
+  if(w)confetti();else rain();
+}
+
+/* ================================================================
+   EFFEKTLAR
+   ================================================================ */
+function confetti(){
+  const c=$('#fx'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const P=Array.from({length:220},()=>({x:Math.random()*c.width,y:-30-Math.random()*c.height*.5,v:2.5+Math.random()*4,s:6+Math.random()*9,h:Math.random()*360,r:Math.random()*6,w:Math.random()*2-1}));
+  let f=0;(function L(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.r+=.1;p.x+=p.w;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=`hsl(${p.h} 90% 60%)`;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});if(++f<420)requestAnimationFrame(L);else x.clearRect(0,0,c.width,c.height)})();
+}
+function rain(){
+  const c=$('#fx'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const P=Array.from({length:55},()=>({x:Math.random()*c.width,y:-Math.random()*c.height*.4,v:2+Math.random()*3}));
+  let f=0;(function L(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;x.font='20px serif';x.fillText('💧',p.x,p.y)});if(++f<230)requestAnimationFrame(L);else x.clearRect(0,0,c.width,c.height)})();
+}
+
+/* ================================================================
+   ISHGA TUSHIRISH
+   ================================================================ */
+uid=getUID();
+const sn=localStorage.getItem('q_name');
+if(sn)$('#nm').value=sn;
+
+const configured=localStorage.getItem('q_configured');
+const cfg=loadConfig();
+DB_URL=cfg.url||'';
+
+if(!configured){
+  show('setup');
+}else{
+  showHome();
+  if(DB_URL)initDB();else{setConn(false,'📴 Lokal rejim');loadLocal()}
+  const me=rows.find(r=>r.id===uid);
+  if(me)$('#info').textContent=`✅ Oldingi natijangiz: ${me.score}/100`;
+}
+</script>
+</body>
+</html>
